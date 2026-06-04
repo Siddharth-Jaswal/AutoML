@@ -1,0 +1,42 @@
+# Node / Next.js (Frontend)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python / FastAPI (Backend)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/env/
+backend/venv/
+backend/.venv/
+backend/env.bak/
+backend/venv.bak/
+backend/.env
+backend/.env.*
+
+# Uploads & Datasets
+backend/datasets/
+!backend/datasets/.gitkeep
+
+# Jupyter Notebooks (if any)
+.ipynb_checkpoints
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
