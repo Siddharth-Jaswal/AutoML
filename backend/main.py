@@ -424,9 +424,24 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: List[ChatMessage] = []
+    password: Optional[str] = None
+
+class PasswordRequest(BaseModel):
+    password: str
+
+@app.post("/verify-assistant")
+async def verify_assistant(request: PasswordRequest):
+    expected_password = os.getenv("ASSISTANT_PASSWORD")
+    if expected_password and request.password == expected_password:
+        return {"success": True}
+    return {"success": False}
 
 @app.post("/dataset/{dataset_id}/chat")
 async def chat_with_dataset(dataset_id: str, request: ChatRequest):
+    expected_password = os.getenv("ASSISTANT_PASSWORD")
+    if expected_password and request.password != expected_password:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid password")
+        
     dataset = await db.datasets.find_one({"id": dataset_id})
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
