@@ -3,17 +3,12 @@ import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Wrench, Plus, X, ArrowRight, Play, CheckCircle } from "lucide-react";
-
-interface Operation {
-  type: string;
-  columns: string[];
-}
+import { AlertTriangle } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 
 export default function Preprocessing() {
-  const { summary, setSummary } = useDatasetStore();
+  const { summary, setSummary, prepOperations, setPrepOperations } = useDatasetStore();
   const router = useRouter();
-  
-  const [operations, setOperations] = useState<Operation[]>([]);
   const [selectedOpType, setSelectedOpType] = useState('StandardScaler');
   const [selectedColumn, setSelectedColumn] = useState('');
   
@@ -31,25 +26,25 @@ export default function Preprocessing() {
 
   const addOperation = () => {
     if (!selectedColumn) return;
-    setOperations([...operations, { type: selectedOpType, columns: [selectedColumn] }]);
+    setPrepOperations([...prepOperations, { type: selectedOpType, columns: [selectedColumn] }]);
     setSuccess(false);
   };
 
   const removeOperation = (index: number) => {
-    setOperations(operations.filter((_, i) => i !== index));
+    setPrepOperations(prepOperations.filter((_, i) => i !== index));
   };
 
   const applyPreprocessing = async () => {
-    if (operations.length === 0) return;
+    if (prepOperations.length === 0) return;
     
     setIsProcessing(true);
     setError(null);
     setSuccess(false);
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/preprocess`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/preprocess`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ operations })
+        body: JSON.stringify({ operations: prepOperations })
       });
       
       if (!res.ok) {
@@ -59,7 +54,7 @@ export default function Preprocessing() {
       
       const newSummary = await res.json();
       setSummary(newSummary);
-      setOperations([]);
+      setPrepOperations([]);
       setSuccess(true);
       
       // Auto-hide success after 3s
@@ -76,6 +71,9 @@ export default function Preprocessing() {
   const allOps = [...new Set([...numericalOps, ...categoricalOps, "DropColumns", "PCA"])].sort();
 
   if (!summary) return null;
+
+  const isMissingOp = ["FillMissingMean", "FillMissingMedian", "FillMissingMode", "DropMissingRows"].includes(selectedOpType);
+  const missingCols = summary.columns_info.filter(c => c.missing_percentage > 0);
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] gap-6 pb-10 max-w-5xl mx-auto w-full">
@@ -121,6 +119,27 @@ export default function Preprocessing() {
               </select>
             </div>
 
+            {isMissingOp && (
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-md p-3">
+                <div className="flex items-center text-amber-500 mb-2">
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  <span className="text-sm font-semibold">Columns with missing values:</span>
+                </div>
+                {missingCols.length > 0 ? (
+                  <ul className="text-xs text-muted-foreground space-y-1 max-h-[120px] overflow-y-auto pr-2">
+                    {missingCols.map(c => (
+                      <li key={c.name} className="flex justify-between border-b border-border/50 pb-1 last:border-0 last:pb-0">
+                        <span className="font-medium text-foreground">{c.name} <span className="text-[10px] text-muted-foreground ml-1">({c.type})</span></span>
+                        <span className="text-amber-500">{c.missing_percentage.toFixed(1)}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs text-green-500 font-medium">No missing values found in this dataset!</p>
+                )}
+              </div>
+            )}
+
             <button 
               onClick={addOperation}
               disabled={!selectedColumn}
@@ -136,12 +155,12 @@ export default function Preprocessing() {
           <h2 className="text-lg font-semibold border-b border-border pb-2 mb-4">Execution Pipeline</h2>
           
           <div className="flex-1 overflow-y-auto space-y-3">
-            {operations.length === 0 ? (
+            {prepOperations.length === 0 ? (
               <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                 No operations added yet.
               </div>
             ) : (
-              operations.map((op, i) => (
+              prepOperations.map((op, i) => (
                 <div key={i} className="flex items-center justify-between bg-muted/30 border border-border rounded-lg p-3">
                   <div className="flex items-center space-x-3">
                     <div className="bg-background rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold border border-border">{i + 1}</div>
@@ -163,7 +182,7 @@ export default function Preprocessing() {
             {success && <div className="text-green-500 text-sm mb-3 flex items-center"><CheckCircle className="w-4 h-4 mr-2"/> Pipeline applied successfully!</div>}
             <button 
               onClick={applyPreprocessing}
-              disabled={operations.length === 0 || isProcessing}
+              disabled={prepOperations.length === 0 || isProcessing}
               className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center shadow-sm disabled:opacity-50"
             >
               {isProcessing ? 'Processing...' : (

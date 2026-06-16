@@ -3,6 +3,7 @@ import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Settings, Play, Plus, Trash2, GitPullRequest } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 
 type FEOperation = {
   id: string;
@@ -20,10 +21,8 @@ type FEOperation = {
 const FE_OPS = ["LogTransform", "Mathematical", "Binning", "Polynomial"];
 
 export default function FeatureEngineering() {
-  const { summary, setSummary } = useDatasetStore();
+  const { summary, setSummary, feOperations: pipeline, setFeOperations: setPipeline } = useDatasetStore();
   const router = useRouter();
-
-  const [pipeline, setPipeline] = useState<FEOperation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -58,7 +57,7 @@ export default function FeatureEngineering() {
     setSuccessMsg(null);
     
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/feature-engineering`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/feature-engineering`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ operations: pipeline })

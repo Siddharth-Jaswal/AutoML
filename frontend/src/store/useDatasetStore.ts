@@ -7,6 +7,24 @@ export interface ColumnInfo {
   missing_percentage: number;
 }
 
+export interface PreprocessOperation {
+  type: string;
+  columns: string[];
+}
+
+export type FEOperation = {
+  id: string;
+  type: string;
+  column?: string;
+  column1?: string;
+  column2?: string;
+  operation?: string;
+  new_column_name?: string;
+  bins?: number;
+  strategy?: string;
+  degree?: number;
+};
+
 export interface DatasetSummary {
   _id?: string;
   id?: string;
@@ -33,12 +51,16 @@ interface DatasetState {
   isLoading: boolean;
   error: string | null;
   chatHistory: ChatMessage[];
+  prepOperations: PreprocessOperation[];
+  feOperations: FEOperation[];
   setSummary: (summary: DatasetSummary) => void;
   setTarget: (target: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   addChatMessage: (msg: ChatMessage) => void;
   clearChatHistory: () => void;
+  setPrepOperations: (ops: PreprocessOperation[]) => void;
+  setFeOperations: (ops: FEOperation[]) => void;
   reset: () => void;
 }
 
@@ -51,6 +73,8 @@ export const useDatasetStore = create<DatasetState>()(
       isLoading: false,
       error: null,
       chatHistory: [],
+      prepOperations: [],
+      feOperations: [],
       setSummary: (summary) => set({ summary, error: null }),
       setTarget: (target) => set((state) => ({ 
         summary: state.summary ? { ...state.summary, target_column: target } : null 
@@ -59,7 +83,9 @@ export const useDatasetStore = create<DatasetState>()(
       setError: (error) => set({ error, isLoading: false }),
       addChatMessage: (msg) => set((state) => ({ chatHistory: [...state.chatHistory, msg] })),
       clearChatHistory: () => set({ chatHistory: [] }),
-      reset: () => set({ summary: null, error: null, isLoading: false, chatHistory: [] })
+      setPrepOperations: (ops) => set({ prepOperations: ops }),
+      setFeOperations: (ops) => set({ feOperations: ops }),
+      reset: () => set({ summary: null, error: null, isLoading: false, chatHistory: [], prepOperations: [], feOperations: [] })
     }),
     {
       name: 'dataset-storage', // key in localStorage
