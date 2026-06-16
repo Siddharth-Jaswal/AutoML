@@ -45,7 +45,7 @@ export default function Assistant() {
   }, [chatHistory, streamingMessage]);
 
   const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
+    if (!input.trim() || isTyping || !summary) return;
     
     const userMessage = input.trim();
     setInput('');
@@ -55,7 +55,7 @@ export default function Assistant() {
 
     try {
       const savedPassword = localStorage.getItem('assistant_password') || '';
-      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/chat`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
