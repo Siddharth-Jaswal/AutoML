@@ -1,8 +1,9 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Bot, UploadCloud, AlertCircle, FileSpreadsheet } from 'lucide-react';
 import { useDatasetStore } from '@/store/useDatasetStore';
 import { useRouter } from 'next/navigation';
+import { BACKEND_URL, MAX_UPLOAD_MB } from '@/lib/config';
 
 export function UploadDropzone() {
   const [isDragging, setIsDragging] = useState(false);
@@ -11,6 +12,27 @@ export function UploadDropzone() {
   const router = useRouter();
   
   const { setLoading, setSummary, setError, isLoading, error } = useDatasetStore();
+  const [isWakingServer, setIsWakingServer] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const pingServer = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/`);
+        if (res.ok && isMounted) {
+          setIsWakingServer(false);
+        } else if (isMounted) {
+          setTimeout(pingServer, 3000);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setTimeout(pingServer, 3000);
+        }
+      }
+    };
+    pingServer();
+    return () => { isMounted = false; };
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -43,6 +65,11 @@ export function UploadDropzone() {
       setSelectedFile(null);
       return;
     }
+    if (file.size > MAX_UPLOAD_MB * 1024 * 1024) {
+      setError(`File is too large. Maximum size allowed is ${MAX_UPLOAD_MB} MB.`);
+      setSelectedFile(null);
+      return;
+    }
     setError(null);
     setSelectedFile(file);
   };
@@ -57,7 +84,7 @@ export function UploadDropzone() {
     formData.append('file', selectedFile);
     
     try {
-      const response = await fetch('http://localhost:8000/upload', {
+      const response = await fetch(`${BACKEND_URL}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -76,6 +103,25 @@ export function UploadDropzone() {
       setLoading(false);
     }
   };
+
+  if (isWakingServer) {
+    return (
+      <div className="relative rounded-xl border-2 border-border bg-card p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center animate-pulse">
+          <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+            <Bot className="h-8 w-8 text-primary animate-bounce" />
+          </div>
+          <h3 className="text-xl font-semibold text-card-foreground">Waking up the AI Server...</h3>
+          <p className="mt-2 text-sm text-muted-foreground max-w-md">
+            Connecting to the backend cluster. On free hosting tiers, this might take up to 50 seconds to spin up from sleep. Please wait!
+          </p>
+          <div className="w-64 h-2 bg-secondary rounded-full mt-8 overflow-hidden">
+             <div className="h-full bg-primary animate-[pulse_1s_ease-in-out_infinite] w-full rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
