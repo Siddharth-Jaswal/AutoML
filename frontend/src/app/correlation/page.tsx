@@ -38,7 +38,7 @@ export default function CorrelationAnalysis() {
     setIsLoading(true);
     setError(null);
     try {
-      let url = `${BACKEND_URL}/dataset/${summary.id}/correlation?method=${method}`;
+      let url = `${BACKEND_URL}/dataset/${summary?.id}/correlation?method=${method}`;
       if (mode === 'custom') {
         url += `&features=${encodeURIComponent(selectedFeatures.join(','))}`;
       }

@@ -26,7 +26,7 @@ export default function DatasetOverview() {
     setTarget(columnName);
     
     try {
-      await fetch(`${BACKEND_URL}/dataset/${summary.id}/target`, {
+      await fetch(`${BACKEND_URL}/dataset/${summary?.id}/target`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target_column: columnName }),

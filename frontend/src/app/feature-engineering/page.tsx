@@ -33,6 +33,8 @@ export default function FeatureEngineering() {
     }
   }, [summary, router]);
 
+  if (!summary) return null;
+
 
 
   const numericalFeatures = summary.columns_info.filter(c => c.type.includes('int') || c.type.includes('float')).map(c => c.name);
@@ -57,7 +59,7 @@ export default function FeatureEngineering() {
     setSuccessMsg(null);
     
     try {
-      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/feature-engineering`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/feature-engineering`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ operations: pipeline })
@@ -78,9 +80,6 @@ export default function FeatureEngineering() {
       setIsLoading(false);
     }
   };
-
-  if (!summary) return null;
-
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] gap-6 pb-10 max-w-5xl mx-auto w-full">
       <div>

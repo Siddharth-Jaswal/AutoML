@@ -45,14 +45,14 @@ export default function VisualizationsBuilder() {
   }, [plotType]);
 
   const isNumeric = (colName: string) => {
-    const col = summary.columns_info.find(c => c.name === colName);
+    const col = summary?.columns_info?.find(c => c.name === colName);
     if (!col) return false;
     return col.type.includes('int') || col.type.includes('float');
   };
 
   const getValidColumns = (requiredType: string) => {
-    if (requiredType === 'any') return summary.columns_info;
-    if (requiredType === 'numeric') return summary.columns_info.filter(c => c.type.includes('int') || c.type.includes('float'));
+    if (requiredType === 'any') return summary?.columns_info || [];
+    if (requiredType === 'numeric') return (summary?.columns_info || []).filter(c => c.type.includes('int') || c.type.includes('float'));
     return [];
   };
 
@@ -82,7 +82,7 @@ export default function VisualizationsBuilder() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/plot`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/plot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

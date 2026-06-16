@@ -41,7 +41,7 @@ export default function Preprocessing() {
     setError(null);
     setSuccess(false);
     try {
-      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/preprocess`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/preprocess`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ operations: prepOperations })
@@ -73,7 +73,7 @@ export default function Preprocessing() {
   if (!summary) return null;
 
   const isMissingOp = ["FillMissingMean", "FillMissingMedian", "FillMissingMode", "DropMissingRows"].includes(selectedOpType);
-  const missingCols = summary.columns_info.filter(c => c.missing_percentage > 0);
+  const missingCols = (summary?.columns_info || []).filter(c => c.missing_percentage > 0);
 
   return (
     <div className="flex flex-col h-[calc(100vh-100px)] gap-6 pb-10 max-w-5xl mx-auto w-full">

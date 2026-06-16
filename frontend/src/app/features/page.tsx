@@ -17,8 +17,8 @@ export default function FeaturesAnalysis() {
   useEffect(() => {
     if (!summary) {
       router.push("/");
-    } else if (summary.columns_info.length > 0 && !selectedFeature) {
-      setSelectedFeature(summary.columns_info[0].name);
+    } else if ((summary?.columns_info?.length || 0) > 0 && !selectedFeature) {
+      setSelectedFeature(summary?.columns_info?.[0]?.name);
     }
   }, [summary, router, selectedFeature]);
 
@@ -28,7 +28,7 @@ export default function FeaturesAnalysis() {
       
       setIsLoading(true);
       try {
-        const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/feature/${selectedFeature}`);
+        const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/feature/${selectedFeature}`);
         if (res.ok) {
           const data = await res.json();
           setFeatureData(data);
@@ -95,7 +95,7 @@ export default function FeaturesAnalysis() {
                 <div key={key} className="bg-card border border-border rounded-xl p-4 shadow-sm flex flex-col justify-between">
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{key.replace('_', ' ')}</span>
                   <span className="text-xl font-semibold mt-2 text-foreground truncate" title={String(value)}>
-                    {value === null ? 'N/A' : typeof value === 'number' ? Number.isInteger(value) ? value : value.toFixed(4) : value}
+                    {value === null ? 'N/A' : typeof value === 'number' ? (Number.isInteger(value) ? value : value.toFixed(4)) : String(value)}
                   </span>
                 </div>
               ))}
