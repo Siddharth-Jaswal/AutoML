@@ -3,6 +3,7 @@ import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Activity, AlertTriangle, Info, Play, CheckSquare } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
 
 export default function CorrelationAnalysis() {
@@ -37,7 +38,7 @@ export default function CorrelationAnalysis() {
     setIsLoading(true);
     setError(null);
     try {
-      let url = `http://localhost:8000/dataset/${summary.id}/correlation?method=${method}`;
+      let url = `${BACKEND_URL}/dataset/${summary.id}/correlation?method=${method}`;
       if (mode === 'custom') {
         url += `&features=${encodeURIComponent(selectedFeatures.join(','))}`;
       }

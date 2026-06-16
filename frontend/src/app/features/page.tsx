@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
 import { BarChart2, PieChart, Activity, AlignLeft } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 
 export default function FeaturesAnalysis() {
   const { summary } = useDatasetStore();
@@ -27,7 +28,7 @@ export default function FeaturesAnalysis() {
       
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/dataset/${summary.id}/feature/${selectedFeature}`);
+        const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/feature/${selectedFeature}`);
         if (res.ok) {
           const data = await res.json();
           setFeatureData(data);

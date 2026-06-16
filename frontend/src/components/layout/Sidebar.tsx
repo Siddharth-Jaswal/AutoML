@@ -31,6 +31,7 @@ const routes = [
 
 import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
+import { BACKEND_URL } from "@/lib/config";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -40,7 +41,7 @@ export function Sidebar() {
   const handleUndo = async () => {
     if (!summary?.id) return;
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/undo`, { method: 'POST' });
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/undo`, { method: 'POST' });
       if (res.ok) {
         const newSummary = await res.json();
         setSummary(newSummary);
@@ -53,7 +54,7 @@ export function Sidebar() {
   const handleRedo = async () => {
     if (!summary?.id) return;
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/redo`, { method: 'POST' });
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/redo`, { method: 'POST' });
       if (res.ok) {
         const newSummary = await res.json();
         setSummary(newSummary);
@@ -66,7 +67,7 @@ export function Sidebar() {
   const handleEject = async () => {
     if (!summary?.id) return;
     try {
-      await fetch(`http://localhost:8000/dataset/${summary.id}`, { method: 'DELETE' });
+      await fetch(`${BACKEND_URL}/dataset/${summary.id}`, { method: 'DELETE' });
     } catch (e) {
       console.error(e);
     }
@@ -123,7 +124,7 @@ export function Sidebar() {
         {summary && (
           <>
             <a 
-              href={`http://localhost:8000/dataset/${summary.id}/export`}
+              href={`${BACKEND_URL}/dataset/${summary.id}/export`}
               download
               className="w-full flex items-center justify-center gap-2 p-2 bg-primary/10 text-primary rounded text-sm font-medium hover:bg-primary/20 transition-colors"
             >

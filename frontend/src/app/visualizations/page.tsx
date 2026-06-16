@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
 import { PieChart, Settings2, AlertCircle } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 
 const CHART_CONFIG = {
   scatter: { name: 'Scatter Plot', dims: 2, xType: 'any', yType: 'any' },
@@ -81,7 +82,7 @@ export default function VisualizationsBuilder() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/plot`, {
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/plot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

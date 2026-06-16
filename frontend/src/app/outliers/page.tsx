@@ -3,6 +3,7 @@ import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Target, Activity, Database, ArrowRight } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
 import Link from "next/link";
 
@@ -23,7 +24,7 @@ export default function OutliersAnalysis() {
     async function fetchOutliers() {
       setIsLoading(true);
       try {
-        const res = await fetch(`http://localhost:8000/dataset/${summary?.id}/outliers`);
+        const res = await fetch(`${BACKEND_URL}/dataset/${summary?.id}/outliers`);
         if (!res.ok) throw new Error("Failed to fetch outliers report");
         const data = await res.json();
         setReport(data);

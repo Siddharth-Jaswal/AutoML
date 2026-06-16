@@ -3,6 +3,7 @@ import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Database, AlertTriangle, FileSpreadsheet, Activity, Target } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 import { HealthScore } from "@/components/HealthScore";
 import { DatasetTable } from "@/components/DatasetTable";
 
@@ -25,7 +26,7 @@ export default function DatasetOverview() {
     setTarget(columnName);
     
     try {
-      await fetch(`http://localhost:8000/dataset/${summary.id}/target`, {
+      await fetch(`${BACKEND_URL}/dataset/${summary.id}/target`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target_column: columnName }),
