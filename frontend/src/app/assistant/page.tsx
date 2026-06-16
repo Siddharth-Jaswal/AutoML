@@ -2,7 +2,8 @@
 import { useDatasetStore } from "@/store/useDatasetStore";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { Send, Trash2, Loader2, Sparkles, MessageSquare } from "lucide-react";
+import { Send, Trash2, Loader2, Sparkles, MessageSquare, Lock, Unlock } from "lucide-react";
+import { BACKEND_URL } from "@/lib/config";
 import ReactMarkdown from 'react-markdown';
 
 export default function Assistant() {
@@ -13,6 +14,19 @@ export default function Assistant() {
   const [isTyping, setIsTyping] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [lockError, setLockError] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('assistant_password');
+      if (saved) {
+        setIsUnlocked(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!summary) {
@@ -40,14 +54,22 @@ export default function Assistant() {
     setStreamingMessage('');
 
     try {
-      const res = await fetch(`http://localhost:8000/dataset/${summary.id}/chat`, {
+      const savedPassword = localStorage.getItem('assistant_password') || '';
+      const res = await fetch(`${BACKEND_URL}/dataset/${summary.id}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           message: userMessage,
-          history: chatHistory
+          history: chatHistory,
+          password: savedPassword
         })
       });
+
+      if (res.status === 401) {
+        setIsUnlocked(false);
+        localStorage.removeItem('assistant_password');
+        throw new Error('Unauthorized');
+      }
 
       if (!res.ok) {
         throw new Error('Failed to fetch response');
@@ -84,6 +106,60 @@ export default function Assistant() {
   };
 
   if (!summary) return null;
+
+  if (!isUnlocked) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-40px)] w-full items-center justify-center bg-background p-6">
+        <div className="w-full max-w-md bg-card border border-border shadow-2xl rounded-3xl p-8 flex flex-col items-center text-center">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-inner">
+            <Lock className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2 text-foreground">Premium Feature Locked</h2>
+          <p className="text-muted-foreground mb-8 text-sm">Please enter the access password to unlock the AI Data Science Copilot.</p>
+          
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setLockError('');
+              try {
+                const res = await fetch(`${BACKEND_URL}/verify-assistant`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ password: passwordInput })
+                });
+                const data = await res.json();
+                if (data.success) {
+                  localStorage.setItem('assistant_password', passwordInput);
+                  setIsUnlocked(true);
+                } else {
+                  setLockError('Invalid password. Please try again.');
+                }
+              } catch (err) {
+                setLockError('Error verifying password.');
+              }
+            }}
+            className="w-full flex flex-col gap-4"
+          >
+            <input 
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Enter password..."
+              className="w-full bg-background border border-border rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-muted-foreground shadow-sm"
+            />
+            {lockError && <p className="text-destructive text-sm font-medium">{lockError}</p>}
+            <button 
+              type="submit"
+              disabled={!passwordInput}
+              className="w-full bg-primary text-primary-foreground font-medium py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
+            >
+              <Unlock className="w-4 h-4" /> Unlock Copilot
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-40px)] w-full relative bg-background">
