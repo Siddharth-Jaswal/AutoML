@@ -55,9 +55,12 @@ Navigate to the `backend/` directory and copy the example file:
 cd backend
 cp .env.example .env
 ```
-Open `backend/.env` and fill in your actual values:
-*   `GROQ_API_KEY`: Get your free API key from [Groq Console](https://console.groq.com/).
-*   `ASSISTANT_PASSWORD`: Change `admin123` to a secure password. You will need to enter this in the frontend UI to unlock the AI Assistant tab.
+Open `backend/.env`. For local development, set:
+*   `ENVIRONMENT=local`
+*   `MONGODB_URI=mongodb://localhost:27017`
+*   `LLM_PROVIDER=groq`
+*   `GROQ_API_KEY=your_groq_api_key`
+*   `ASSISTANT_PASSWORD=any_password_you_want`
 
 ### 2. Frontend Environment
 Navigate to the `frontend/` directory and copy the example file:
@@ -126,11 +129,12 @@ We recommend deploying the frontend to **Vercel** and the backend to **Render**.
 ### Backend (Render)
 1. Push your code to GitHub.
 2. Go to [Render](https://render.com/) and create a new **Web Service**.
-3. Connect your repository and set the Root Directory to `backend`.
-4. Set the Build Command to `pip install -r requirements.txt`.
-5. Set the Start Command to `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-6. Add your Environment Variables (`LLM_PROVIDER`, `GROQ_API_KEY`, `ASSISTANT_PASSWORD`).
-7. Deploy! Copy your live Render URL (e.g., `https://automl-api.onrender.com`).
+3. Connect your GitHub repository.
+4. Set the Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+5. Add your Environment Variables:
+   *   `ENVIRONMENT`: `production` (Bypasses MongoDB and uses localized JSON file storage)
+   *   `LLM_PROVIDER`, `GROQ_API_KEY`, `ASSISTANT_PASSWORD`
+6. Deploy! Copy your live Render URL (e.g., `https://automl-api.onrender.com`).
 
 *Note: The frontend includes a loader to handle Render's free-tier sleep cycles.*
 
