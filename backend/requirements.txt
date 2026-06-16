@@ -7,3 +7,5 @@ python-multipart
 pydantic
 motor
 python-dotenv
+groq
+httpx
