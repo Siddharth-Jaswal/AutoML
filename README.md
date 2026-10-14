@@ -12,7 +12,7 @@ This tool serves as an intelligent copilot for data scientists, providing immedi
 * **Outlier & Correlation Analysis**: Automatically detect statistical outliers using the IQR method and compute correlation matrices to identify multicollinearity.
 * **Custom Visualizations**: Build dynamic, interactive charts (Scatter, Line, Histogram, KDE, Box, Violin) using an integrated Plotly engine.
 * **Contextual UI**: Highlights missing data percentage and datatypes for affected columns when performing imputation operations.
-* **Context-Aware AI Assistant**: A conversational interface powered natively by the **Groq Cloud API** (`llama-3.3-70b-versatile`) with a dual-model fallback mechanism (`17b-scout`) to handle rate limits. Protected via backend password validation for secure deployments.
+* **Context-Aware AI Assistant**: A conversational interface powered natively by the **Groq Cloud API** (`openai/gpt-oss-120b`) with an automatic dual-model fallback mechanism (`openai/gpt-oss-20b`) to handle rate limits. Protected via backend password validation for secure deployments.
 * **State Management & Persistence**: Undo/Redo capabilities for dataset transformations. Preprocessing and feature engineering pipelines are persisted via local storage (Zustand) across tabs.
 * **Export**: Download your cleaned and engineered dataset at any point in the pipeline.
 

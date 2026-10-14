@@ -42,15 +42,15 @@ async def stream_chat_response(summary_data: dict, chat_history: list, user_mess
             
         messages.append({"role": "user", "content": user_message})
 
-        primary_model = "llama-3.3-70b-versatile"
-        fallback_model = "meta-llama/llama-4-scout-17b-16e-instruct"
+        primary_model = os.getenv("GROQ_PRIMARY_MODEL", "openai/gpt-oss-120b")
+        fallback_model = os.getenv("GROQ_FALLBACK_MODEL", "openai/gpt-oss-20b")
         
         try:
             stream = await client.chat.completions.create(
                 model=primary_model,
                 messages=messages,
                 temperature=0.7,
-                max_completion_tokens=2048,
+                max_completion_tokens=4096,
                 stream=True,
             )
             async for chunk in stream:
@@ -59,14 +59,14 @@ async def stream_chat_response(summary_data: dict, chat_history: list, user_mess
                     yield content.encode('utf-8')
                     
         except RateLimitError as e:
-            # Fallback to secondary model if primary hits 12K TPM limit
+            # Fallback to secondary model if primary hits rate limits
             try:
                 yield b"\n\n*[System: Switching to fallback model due to high traffic on primary model]*\n\n"
                 stream = await client.chat.completions.create(
                     model=fallback_model,
                     messages=messages,
                     temperature=0.7,
-                    max_completion_tokens=2048,
+                    max_completion_tokens=4096,
                     stream=True,
                 )
                 async for chunk in stream:
