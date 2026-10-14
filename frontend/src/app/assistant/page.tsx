@@ -162,7 +162,7 @@ export default function Assistant() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-40px)] w-full relative bg-background">
+    <div className="flex flex-col h-[calc(100vh-100px)] md:h-[calc(100vh-40px)] w-full relative bg-background">
       
       {/* Header */}
       <div className="absolute top-0 w-full z-10 bg-background/80 backdrop-blur-md border-b border-border/50">

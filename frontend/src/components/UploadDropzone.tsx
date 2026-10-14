@@ -181,7 +181,7 @@ export function UploadDropzone() {
 
   return (
     <div 
-      className={`relative rounded-3xl border-2 transition-all duration-300 p-16 text-center flex flex-col items-center justify-center min-h-[450px] shadow-2xl shadow-black/40
+      className={`relative rounded-3xl border-2 transition-all duration-300 p-6 sm:p-10 md:p-16 text-center flex flex-col items-center justify-center min-h-[350px] sm:min-h-[450px] shadow-2xl shadow-black/40
         ${isDragging ? 'border-primary bg-primary/10 scale-[1.02] border-solid' : 'border-border border-dashed bg-card hover:border-primary/50 hover:shadow-primary/5'}
       `}
       onDragOver={handleDragOver}

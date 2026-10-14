@@ -81,7 +81,7 @@ export default function FeatureEngineering() {
     }
   };
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] gap-6 pb-10 max-w-5xl mx-auto w-full">
+    <div className="flex flex-col min-h-[calc(100vh-120px)] gap-6 pb-10 max-w-5xl mx-auto w-full">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center">
           <GitPullRequest className="w-8 h-8 mr-3 text-emerald-500" />

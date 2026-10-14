@@ -50,8 +50,8 @@ export default function DatasetOverview() {
             Comprehensive breakdown of <span className="font-semibold text-foreground">{summary.filename}</span>
           </p>
         </div>
-        <div className="flex items-center bg-card border border-border px-4 py-2 rounded-xl shadow-sm">
-           <span className="text-sm font-medium text-muted-foreground mr-6">Overall Dataset Health</span>
+        <div className="flex items-center justify-between sm:justify-start bg-card border border-border px-4 py-2.5 rounded-xl shadow-sm">
+           <span className="text-sm font-medium text-muted-foreground mr-4 sm:mr-6">Overall Dataset Health</span>
            <HealthScore score={healthScore} />
         </div>
       </div>

@@ -158,8 +158,80 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
   }
   html {
     @apply font-sans;
   }
+}
+
+/* Tactile Button Feedback & Ripple Animations */
+.has-tap-ripple {
+  overflow: hidden !important;
+}
+
+.tap-ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(159, 161, 255, 0.45) 0%, rgba(159, 161, 255, 0) 70%);
+  transform: scale(0);
+  animation: tap-ripple-anim 420ms cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  z-index: 99;
+}
+
+.dark .tap-ripple-effect {
+  background: radial-gradient(circle, rgba(250, 240, 230, 0.4) 0%, rgba(159, 161, 255, 0.1) 50%, rgba(255, 255, 255, 0) 70%);
+}
+
+.galactic .tap-ripple-effect {
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.55) 0%, rgba(0, 240, 255, 0) 70%);
+}
+
+@keyframes tap-ripple-anim {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Tactile Button Micro-Interactions */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+.btn-interactive {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.12s ease,
+              box-shadow 0.12s ease,
+              background-color 0.15s ease,
+              border-color 0.15s ease;
+  user-select: none;
+}
+
+button:active:not(:disabled),
+[role="button"]:active:not([aria-disabled="true"]),
+input[type="button"]:active:not(:disabled),
+input[type="submit"]:active:not(:disabled),
+.btn-interactive:active {
+  transform: scale(0.95) translateY(1px) !important;
+}
+
+.dark button:active:not(:disabled),
+.dark [role="button"]:active:not([aria-disabled="true"]) {
+  filter: brightness(1.15) drop-shadow(0 0 6px rgba(159, 161, 255, 0.3));
+}
+
+.galactic button:active:not(:disabled),
+.galactic [role="button"]:active:not([aria-disabled="true"]) {
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
 }

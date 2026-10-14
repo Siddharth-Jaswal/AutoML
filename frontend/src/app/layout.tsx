@@ -4,6 +4,8 @@ import "./globals.css";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+import { ClickEffectProvider } from "@/components/ClickEffectProvider";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -33,7 +35,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <MainLayout>{children}</MainLayout>
+          <ClickEffectProvider>
+            <MainLayout>{children}</MainLayout>
+          </ClickEffectProvider>
         </ThemeProvider>
       </body>
     </html>

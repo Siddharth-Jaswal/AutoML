@@ -46,9 +46,9 @@ export default function FeaturesAnalysis() {
   if (!summary) return null;
 
   return (
-    <div className="flex h-[calc(100vh-100px)] gap-6">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-120px)] md:h-[calc(100vh-100px)] gap-6">
       {/* Feature Selector Sidebar */}
-      <div className="w-64 flex flex-col bg-card border border-border rounded-xl overflow-hidden shrink-0 shadow-sm">
+      <div className="w-full md:w-64 max-h-52 md:max-h-none flex flex-col bg-card border border-border rounded-xl overflow-hidden shrink-0 shadow-sm">
         <div className="p-4 border-b border-border bg-muted/30">
           <h3 className="font-semibold text-foreground">Features</h3>
           <p className="text-xs text-muted-foreground mt-1">Select a column to analyze</p>
@@ -70,7 +70,7 @@ export default function FeaturesAnalysis() {
       </div>
       
       {/* Feature Analysis Area */}
-      <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2 pb-10">
+      <div className="flex-1 flex flex-col gap-6 md:overflow-y-auto pr-0 md:pr-2 pb-10">
         {isLoading || !featureData ? (
           <div className="h-full flex items-center justify-center">
             <div className="animate-pulse flex flex-col items-center">
