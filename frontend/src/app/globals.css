@@ -235,3 +235,20 @@ input[type="submit"]:active:not(:disabled),
 .galactic [role="button"]:active:not([aria-disabled="true"]) {
   filter: brightness(1.2) drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
 }
+
+/* Chat Markdown Typography & Containment */
+.chat-markdown-body {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.chat-markdown-body pre {
+  max-width: 100%;
+  white-space: pre;
+  word-break: normal;
+  overflow-x: auto;
+}
+
+.chat-markdown-body code {
+  font-feature-settings: "liga" 0;
+}

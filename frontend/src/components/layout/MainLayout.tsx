@@ -1,11 +1,13 @@
 'use client';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Sidebar } from "./Sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Menu, Bot } from "lucide-react";
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
@@ -61,10 +63,16 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
         </div>
 
-        {/* Scrollable Page Body with Responsive Padding */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-5 md:p-8 relative">
-          {children}
-        </div>
+        {/* Page Body Container */}
+        {pathname === '/assistant' ? (
+          <div className="flex-1 overflow-hidden p-0 relative flex flex-col min-h-0 w-full">
+            {children}
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-3 sm:p-5 md:p-8 relative">
+            {children}
+          </div>
+        )}
       </main>
     </div>
   );
